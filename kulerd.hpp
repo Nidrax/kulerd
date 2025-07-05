@@ -67,13 +67,24 @@ namespace kulerd {
 
     static std::string c(const std::string& text, const Color fgColor, const Color bgColor = Color::Default) {
         std::stringstream ss;
-        if (fgColor == Color::Default && bgColor == Color::Default ||
-            !Foreground.contains(fgColor) || !Background.contains(bgColor)) {
+        if (fgColor == Color::Default && bgColor == Color::Default) {
             return text;
         }
-        const auto fg = fgColor == Color::Default ? Foreground.find(Color::White) : Foreground.find(fgColor);
-        const auto bg = bgColor == Color::Default ? Background.find(Color::Black) : Background.find(bgColor);
-        ss << "\033[" << static_cast<int>(fg->second) << ";" << static_cast<int>(bg->second) << "m" << text << "\033[0m";
+        if ((!Foreground.contains(fgColor) && fgColor != Color::Default) ||
+            (!Background.contains(bgColor) && bgColor != Color::Default)) {
+            std::cerr << "Invalid color specified." << std::endl;
+            return text; // Return original text if colors are invalid
+        }
+        const auto fg = fgColor != Color::Default ? Foreground.find(fgColor) : Foreground.find(Color::White);
+        if (bgColor != Color::Default)
+        {
+            const auto bg = Background.find(bgColor);
+            ss << "\033[" << static_cast<int>(fg->second) << ";" << static_cast<int>(bg->second) << "m" << text << "\033[0m";
+        }
+        else
+        {
+            ss << "\033[" << static_cast<int>(fg->second) << "m" << text << "\033[0m";
+        }
         return ss.str();
     }
 } // namespace kulerd
