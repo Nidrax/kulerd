@@ -70,11 +70,7 @@ namespace kulerd {
         if (fgColor == Color::Default && bgColor == Color::Default) {
             return text;
         }
-        if ((!Foreground.contains(fgColor) && fgColor != Color::Default) ||
-            (!Background.contains(bgColor) && bgColor != Color::Default)) {
-            std::cerr << "Invalid color specified." << std::endl;
-            return text; // Return original text if colors are invalid
-        }
+
         const auto fg = fgColor != Color::Default ? Foreground.find(fgColor) : Foreground.find(Color::White);
         if (bgColor != Color::Default)
         {
